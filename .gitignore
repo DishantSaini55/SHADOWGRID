@@ -1,0 +1,15 @@
+node_modules/
+**/node_modules/
+.env
+**/.env
+!.env.example
+!**/.env.example
+.DS_Store
+Thumbs.db
+dist/
+build/
+coverage/
+.vscode/
+
+# Keep the nested frontend repo metadata out of the new monorepo
+nexacorp/.git-backup/
