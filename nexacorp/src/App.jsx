@@ -9,7 +9,7 @@ import Careers from './pages/Careers';
 import Login from './pages/Login';
 import Terminal from './pages/Terminal';
 import Dashboard from './pages/Dashboard';
-import { sessionTracker } from './utils/analytics';
+import { sessionTracker, sendSessionToBackend } from './utils/analytics';
 import { X, Copy, Download } from 'lucide-react';
 
 function AppLayout() {
@@ -26,6 +26,14 @@ function AppLayout() {
     window.addEventListener('mousemove', onMove, { once: true });
     window.addEventListener('contextmenu', onRightClick);
     return () => window.removeEventListener('contextmenu', onRightClick);
+  }, []);
+
+  // Periodically send session snapshot to backend every 30s
+  useEffect(() => {
+    const interval = setInterval(() => {
+      try { sendSessionToBackend(); } catch (e) {}
+    }, 30000);
+    return () => clearInterval(interval);
   }, []);
 
   const handleCopySessionData = () => {

@@ -67,7 +67,6 @@ const sessionSchema = new mongoose.Schema({
 
 sessionSchema.index({ createdAt: -1 });
 sessionSchema.index({ threatScore: -1 });
-sessionSchema.index({ sessionId: 1 });
 
 sessionSchema.pre('save', function (next) {
   this.updatedAt = Date.now();

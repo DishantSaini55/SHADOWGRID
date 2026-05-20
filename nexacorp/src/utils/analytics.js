@@ -1,3 +1,8 @@
+import { io } from 'socket.io-client';
+
+// socket connection to backend (best-effort, silent failures)
+const socket = io('http://localhost:5000');
+
 // Global session analytics - honeypot signals tracker
 export const sessionTracker = {
   sessionId: `session_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
@@ -253,3 +258,25 @@ export const useScrollTracking = () => {
     sessionTracker.recordScrollDepth(depth);
   };
 };
+
+// Send session snapshot to backend capture endpoint
+export function sendSessionToBackend() {
+  try {
+    const data = sessionTracker.getSessionData();
+    // Fire-and-forget POST
+    fetch('http://localhost:5000/api/capture', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(data)
+    }).catch(() => {});
+
+    // Also try to emit via socket if connected
+    if (socket && socket.connected) {
+      try {
+        socket.emit('new_session_payload', data);
+      } catch (e) {}
+    }
+  } catch (e) {
+    // silently ignore
+  }
+}
